@@ -5,7 +5,11 @@ var GeminiService = {
     if (!context) context = {};
     var systemPrompt = context.systemPrompt || 'You are an AI assistant for Emergency-Mobile-Services.';
     var prompt = systemPrompt + '\nUser: ' + inputText;
-    gemini.queryGemini(prompt, callback);
+
+    gemini.queryGemini(prompt, function (err, response) {
+      if (err) return callback(err);
+      callback(null, response);
+    });
   }
 };
 
