@@ -12,7 +12,12 @@ if (GEMINI_MODEL.includes("1.5")) {
   GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 }
 
-const MODELS = [GEMINI_MODEL, "gemini-pro", "gemini-1.5-flash"];
+const MODELS = [
+  GEMINI_MODEL,
+  "gemini-1.5-pro",
+  "gemini-1.5-flash",
+  "gemini-1.0-pro",
+];
 
 if (!GEMINI_API_KEY) {
   console.error("[Gemini] Missing GEMINI_API_KEY in environment.");
