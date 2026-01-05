@@ -1,15 +1,12 @@
-// Gemini API integration (AI Studio free-tier + Vertex AI compatible)
 import axios from "axios";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-pro";
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-1.5-pro";
 
-// Default: AI Studio free-tier endpoint
-let GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1/models";
-
-// If using Vertex AI (1.5+ models), upgrade to v1beta
-if (GEMINI_MODEL.includes("1.5")) {
-  GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+// Detect if it's a Vertex or AI Studio key
+let GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+if (process.env.GOOGLE_PROJECT_ID) {
+  GEMINI_API_BASE = `https://us-central1-aiplatform.googleapis.com/v1/projects/${process.env.GOOGLE_PROJECT_ID}/locations/us-central1/publishers/google/models`;
 }
 
 const MODELS = [
@@ -46,7 +43,7 @@ export async function queryGemini(prompt) {
         continue;
       } else if (error.response?.status === 403) {
         console.error(
-          "[GeminiService] Access denied: likely invalid or restricted key.",
+          "[GeminiService] Access denied: invalid or restricted key.",
         );
         throw error;
       } else {
@@ -56,5 +53,10 @@ export async function queryGemini(prompt) {
     }
   }
 
-  throw new Error("[GeminiService] All Gemini models failed.");
+  console.warn(
+    "[GeminiService] All Gemini models failed. Falling back to mock mode.",
+  );
+  return {
+    text: "⚠️ Gemini service unavailable. Please check your API key or endpoint.",
+  };
 }
