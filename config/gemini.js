@@ -1,24 +1,18 @@
-// Gemini API integration with dynamic endpoint detection (AI Studio + Vertex AI compatible)
+// Gemini API integration (AI Studio free-tier + Vertex AI compatible)
 import axios from "axios";
 
-// Detect correct Gemini API base based on the type of key or model used
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-pro";
 
-// Default to free-tier AI Studio endpoint unless environment forces Vertex AI
+// Default: AI Studio free-tier endpoint
 let GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1/models";
 
-// If using Vertex AI model naming (1.5-*), upgrade to v1beta endpoint
+// If using Vertex AI (1.5+ models), upgrade to v1beta
 if (GEMINI_MODEL.includes("1.5")) {
   GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 }
 
-const MODELS = [
-  GEMINI_MODEL,
-  "gemini-pro",
-  "gemini-1.5-flash-latest",
-  "gemini-1.5-flash",
-];
+const MODELS = [GEMINI_MODEL, "gemini-pro", "gemini-1.5-flash"];
 
 if (!GEMINI_API_KEY) {
   console.error("[Gemini] Missing GEMINI_API_KEY in environment.");
@@ -56,5 +50,6 @@ export async function queryGemini(prompt) {
       }
     }
   }
+
   throw new Error("[GeminiService] All Gemini models failed.");
 }
